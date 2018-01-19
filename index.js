@@ -1,4 +1,4 @@
-module.exports = function createStore (initialState) {
+export default function createStore (initialState) {
   const state = initialState
   const handlers = []
 
