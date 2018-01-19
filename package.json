@@ -1,0 +1,36 @@
+{
+  "name": "picostate",
+  "version": "0.0.1",
+  "description": "200byte state management.",
+  "source": "index.js",
+  "module": "dist/picostate.es.js",
+  "main": "dist/picostate.js",
+  "umd:main": "dist/picostate.umd.js",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "microbundle build",
+    "watch": "microbundle watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/estrattonbailey/picostate.git"
+  },
+  "keywords": [
+    "model update view",
+    "elm",
+    "state",
+    "state management"
+  ],
+  "author": "estrattonbailey",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/estrattonbailey/picostate/issues"
+  },
+  "homepage": "https://github.com/estrattonbailey/picostate#readme",
+  "devDependencies": {
+    "microbundle": "^0.2.4"
+  },
+  "dependencies": {}
+}
