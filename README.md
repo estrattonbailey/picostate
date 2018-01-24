@@ -7,7 +7,7 @@ npm i picostate --save
 ```
 
 ## Usage
-Create a store:
+Create a store with initial state:
 ```javascript
 import createStore from 'picostate'
 
@@ -36,6 +36,10 @@ emitUpdate() // => Updated: { count: 1 }
 Unlisten:
 ```javascript
 unlisten() // => undefined
+```
+Reset to initial state:
+```javascript
+store.reset()
 ```
 
 ## Usage with UI Libraries

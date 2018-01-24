@@ -1,5 +1,5 @@
 export default function createStore (initialState) {
-  const state = initialState
+  let state = initialState
   const handlers = []
 
   return {
@@ -15,6 +15,9 @@ export default function createStore (initialState) {
     listen (fn) {
       handlers.push(fn)
       return () => handlers.slice(handlers.indexOf(fn), 1)
+    },
+    reset () {
+      state = initialState
     }
   }
 }
