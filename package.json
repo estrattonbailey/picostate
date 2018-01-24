@@ -1,6 +1,6 @@
 {
   "name": "picostate",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "200byte state management.",
   "source": "index.js",
   "module": "dist/picostate.es.js",
