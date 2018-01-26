@@ -42,8 +42,8 @@ Reset to initial state:
 store.reset()
 ```
 
-## Usage with UI Libraries
-Trigger a re-render when the state updates:
+## Usage in React
+A similar pattern could be used with most UI libraries. Basically, trigger a re-render when the state updates:
 ```javascript
 import React from 'react'
 import { render } from 'react-dom'
@@ -72,6 +72,28 @@ function update (state) {
 update(store.state) // initial render
 
 store.listen(update) // re-render on update
+```
+
+### Connectors
+The `connect` HOC pattern is popular in React. It's trivial to create one, but that really applies to most state management libraries:
+```javascript
+import store from './store.js'
+
+export default (map = state => state) => Comp => props => (
+  <Comp {...Object.assign({}, props, map(store.state))} hydrate={store.hydrate} />
+)
+```
+Usage then looks like this:
+```javascript
+import connect from './connect.js'
+
+const MyComponent = connect(state => ({
+  count: state.count
+}))(({ count, hydrate, ...props }) => {
+  return (
+    ...
+  )
+})
 ```
 
 MIT
