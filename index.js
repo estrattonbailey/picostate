@@ -7,7 +7,7 @@ export default function createStore (initialState) {
       return state
     },
     hydrate (fn) {
-      Object.assign(state, typeof fn === 'function' ? fn(state) : fn)
+      state = Object.assign({}, state, typeof fn === 'function' ? fn(state) : fn)
       return function () {
         for (let fn of handlers) fn(state)
       }
