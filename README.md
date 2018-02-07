@@ -6,7 +6,7 @@
 npm i picostate --save
 ```
 
-## Usage
+# Usage
 Create a store with initial state:
 ```javascript
 import createStore from 'picostate'
@@ -33,6 +33,12 @@ Trigger listener(s):
 ```javascript
 emitUpdate() // => Updated: { count: 1 }
 ```
+Run callback on the next tick after update:
+```javascript
+store.hydrate({
+  count: 1
+})(() => console.log('Updated!'))
+```
 Unlisten:
 ```javascript
 unlisten() // => undefined
@@ -42,58 +48,8 @@ Reset to initial state:
 store.reset()
 ```
 
-## Usage in React
-A similar pattern could be used with most UI libraries. Basically, trigger a re-render when the state updates:
-```javascript
-import React from 'react'
-import { render } from 'react-dom'
-import createStore from 'picostate'
+# Usage With UI Libraries
+- React - [@picostate/react](https://github.com/estrattonbailey/picostate-react)
 
-const store = createStore({
-  count: 0
-})
-
-const App = props => (
-  <div>
-    <h1>The count is: {props.count}</h1>
-
-    <button onClick={e => {
-      store.hydrate(state => ({
-        count: state.count + 1
-      }))()
-    }}>Up</button>
-  </div>
-)
-
-function update (state) {
-  render(<App {...state} />, document.body)
-}
-
-update(store.state) // initial render
-
-store.listen(update) // re-render on update
-```
-
-### Connectors
-The `connect` HOC pattern is popular in React. It's trivial to create one, but that really applies to most state management libraries:
-```javascript
-import store from './store.js'
-
-export default (map = state => state) => Comp => props => (
-  <Comp {...Object.assign({}, props, map(store.state))} hydrate={store.hydrate} />
-)
-```
-Usage then looks like this:
-```javascript
-import connect from './connect.js'
-
-const MyComponent = connect(state => ({
-  count: state.count
-}))(({ count, hydrate, ...props }) => {
-  return (
-    ...
-  )
-})
-```
-
-MIT
+## License
+MIT License © [Eric Bailey](https://estrattonbailey.com)

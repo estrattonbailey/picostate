@@ -8,8 +8,9 @@ export default function createStore (initialState) {
     },
     hydrate (fn) {
       state = Object.assign({}, state, typeof fn === 'function' ? fn(state) : fn)
-      return function () {
+      return function (done) {
         for (let fn of handlers) fn(state)
+        done && setTimeout(done, 0)
       }
     },
     listen (fn) {
