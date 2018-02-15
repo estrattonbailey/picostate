@@ -1,4 +1,5 @@
 export default function createStore (initialState) {
+  let tick
   let state = initialState
   const handlers = []
 
@@ -9,8 +10,11 @@ export default function createStore (initialState) {
     hydrate (fn) {
       state = Object.assign({}, state, typeof fn === 'function' ? fn(state) : fn)
       return function (done) {
-        for (let fn of handlers) fn(state)
-        done && setTimeout(done, 0)
+        tick && clearTimeout(tick)
+        tick = setTimeout(() => {
+          for (let fn of handlers) fn(state)
+          done && done()
+        }, 16.67)
       }
     },
     listen (fn) {
