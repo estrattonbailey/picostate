@@ -1,7 +1,7 @@
 export default function createStore (initialState) {
   let tick
   let state = initialState
-  const handlers = []
+  let handlers = []
 
   return {
     get state () {
@@ -23,6 +23,7 @@ export default function createStore (initialState) {
     },
     reset () {
       state = initialState
+      handlers = []
     }
   }
 }
