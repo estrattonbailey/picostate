@@ -1,5 +1,5 @@
 # picostate
-200 byte state management.
+250 byte state management.
 
 ## Install
 ```bash
