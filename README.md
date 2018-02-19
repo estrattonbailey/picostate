@@ -1,5 +1,5 @@
 # picostate
-250 byte state management.
+300 byte state management.
 
 ## Install
 ```bash
@@ -22,6 +22,7 @@ store.state // => { count: 0 }
 Add listener(s):
 ```javascript
 const unlisten = store.listen(state => console.log('Updated:', state))
+store.once(state => console.log('Only fires once:', state))
 ```
 Update state:
 ```javascript
