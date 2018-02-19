@@ -19,7 +19,7 @@ export default function createStore (initialState) {
     },
     listen (fn) {
       handlers.indexOf(fn) < 0 && handlers.push(fn)
-      return () => handlers.slice(handlers.indexOf(fn), 1)
+      return () => handlers.splice(handlers.indexOf(fn), 1)
     },
     reset () {
       state = initialState
