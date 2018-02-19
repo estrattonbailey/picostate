@@ -1,5 +1,4 @@
 export default function createStore (initialState) {
-  let tick
   let state = initialState
   let listeners = []
   let onces = []
@@ -11,12 +10,9 @@ export default function createStore (initialState) {
     hydrate (fn) {
       state = Object.assign({}, state, typeof fn === 'function' ? fn(state) : fn)
       return function (done) {
-        tick && clearTimeout(tick)
-        tick = setTimeout(() => {
-          for (let fn of listeners) fn(state)
-          while (onces.length) onces.pop()(state)
-          done && done()
-        }, 16.67)
+        for (let fn of listeners) fn(state)
+        while (onces.length) onces.pop()(state)
+        done && done()
       }
     },
     listen (fn) {
