@@ -1,7 +1,8 @@
 export default function createStore (initialState) {
   let tick
   let state = initialState
-  let handlers = []
+  let listeners = []
+  let onces = []
 
   return {
     get state () {
@@ -12,18 +13,22 @@ export default function createStore (initialState) {
       return function (done) {
         tick && clearTimeout(tick)
         tick = setTimeout(() => {
-          for (let fn of handlers) fn(state)
+          for (let fn of listeners) fn(state)
+          while (onces.length) onces.pop()(state)
           done && done()
         }, 16.67)
       }
     },
     listen (fn) {
-      handlers.indexOf(fn) < 0 && handlers.push(fn)
-      return () => handlers.splice(handlers.indexOf(fn), 1)
+      listeners.indexOf(fn) < 0 && listeners.push(fn)
+      return () => listeners.splice(listeners.indexOf(fn), 1)
+    },
+    once (fn) {
+      onces.indexOf(fn) < 0 && onces.push(fn)
     },
     reset () {
       state = initialState
-      handlers = []
+      listeners = []
     }
   }
 }
