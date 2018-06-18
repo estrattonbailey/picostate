@@ -1,5 +1,5 @@
 export default function createStore (initialState) {
-  let state = initialState
+  let state = Object.assign({}, initialState)
   let listeners = []
   let onces = []
 
@@ -24,7 +24,6 @@ export default function createStore (initialState) {
     },
     reset () {
       state = initialState
-      listeners = []
     }
   }
 }
