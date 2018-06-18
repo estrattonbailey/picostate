@@ -48,6 +48,10 @@ Reset to initial state:
 ```javascript
 store.reset()
 ```
+Replace entire state object (use caution):
+```javascript
+store.replace({ count: 0 })
+```
 
 # Usage With UI Libraries
 - React - [@picostate/react](https://github.com/estrattonbailey/picostate-react)

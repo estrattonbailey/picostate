@@ -24,6 +24,9 @@ export default function createStore (initialState) {
     },
     reset () {
       state = initialState
+    },
+    replace (s) {
+      state = s
     }
   }
 }
