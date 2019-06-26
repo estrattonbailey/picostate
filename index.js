@@ -1,32 +1,26 @@
-export default function createStore (initialState) {
+export default function createStore (initialState = {}) {
   let state = Object.assign({}, initialState)
-  let listeners = []
-  let onces = []
+  let listeners = new Map()
 
   return {
     get state () {
-      return state
+      return Object.assign({}, state || initialState)
     },
     hydrate (fn) {
-      state = Object.assign({}, state, typeof fn === 'function' ? fn(state) : fn)
-      return function (done) {
-        for (let fn of listeners) fn(state)
-        while (onces.length) onces.pop()(state)
-        done && done()
+      state = fn ? Object.assign(this.state, typeof fn === 'function' ? fn(this.state) : fn) : fn
+
+      return done => {
+        const s = this.state
+        listeners.forEach(([ fn, once ]) => {
+          fn(s)
+          once && listeners.delete(fn)
+        })
+        done && done(s)
       }
     },
-    listen (fn) {
-      listeners.indexOf(fn) < 0 && listeners.push(fn)
-      return () => listeners.splice(listeners.indexOf(fn), 1)
-    },
-    once (fn) {
-      onces.indexOf(fn) < 0 && onces.push(fn)
-    },
-    reset () {
-      state = initialState
-    },
-    replace (s) {
-      state = s
+    listen (fn, once) {
+      !listeners.has(fn) && listeners.set(fn, [fn, once])
+      return () => listeners.delete(fn)
     }
   }
 }
