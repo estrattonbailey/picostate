@@ -19,13 +19,20 @@ test('listeners work', t => {
   })
   store.hydrate({ bar: 'hello' })()
 })
+test('listeners only fire if a value changed', t => {
+  t.plan(0);
+  store.listen(state => {
+    t.fail();
+  })
+  store.hydrate({ bar: 'hello' })() // same value as before
+})
 test('onces work', t => {
   t.plan(1)
   store.listen(state => {
     t.pass()
   }, true)
-  store.hydrate({ bar: 'hello' })()
-  store.hydrate({ bar: 'hello' })()
+  store.hydrate({ bar: 'new value' })()
+  store.hydrate({ bar: 'another' })()
 })
 test('state is immutable', t => {
   store.listen(state => {

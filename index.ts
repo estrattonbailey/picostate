@@ -11,14 +11,27 @@ export default function createStore<State>(initialState: State) {
       return { ...state };
     },
     hydrate(fn?: Hydrate<State>): () => void {
-      state = fn
+      const next = fn
         ? Object.assign(
             this.state,
             typeof fn === "function" ? fn(this.state) : fn
           )
         : initialState;
 
+      let changed: boolean;
+
+      for (const key of Object.keys(next)) {
+        if (next[key] !== state[key]) {
+          changed = true;
+          break;
+        }
+      }
+
+      if (changed) state = next;
+
       return () => {
+        if (!changed) return;
+
         listeners.forEach(([fn, once]) => {
           fn(this.state);
           once && listeners.delete(fn);

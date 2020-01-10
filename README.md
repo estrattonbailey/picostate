@@ -44,7 +44,8 @@ store.state // { count: 0 }
 ```
 
 ### Listeners
-To add a listener, pass a function to the `listen` method:
+To add a listener, pass a function to the `listen` method. *Listeners will only
+fire if a value on the state object changed:*
 ```javascript
 store.listen(state => {
   console.log('the count is ', state.count)
