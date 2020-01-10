@@ -1,5 +1,5 @@
 # picostate
-261 byte framework agnostic immutable state manager.
+240 byte framework agnostic immutable state manager.
 
 > Why `picostate`? Valid question. There are a lot of options out there for state
 > management, and many do too much in my opinion. `picostate` aims to be the smallest
@@ -67,19 +67,23 @@ store.listen(state => console.log('fires once'), true)
 ### Updating state
 All state updates happen via the `hydrate` method.
 
-To update state, but _not_ run any listeners:
+To update state, but _not_ run any listeners pass an object:
 ```javascript
 store.hydrate({ count: 1 })
 ```
-
-To run all listeners, use the function returned from `hydrate`:
+Or a function:
 ```javascript
-const runListeners = store.hydrate(state => ({ count: state.count + 1 }))
-runListeners() // The count is 2
+store.hydrate(state => ({ count: state.count + 1 }))
+```
+
+To fire all listeners, use the function returned from `hydrate`:
+```javascript
+const fire = store.hydrate({ count: 2 })
+fire() // => The count is 2
 ```
 
 ### Cleanup
-To reset the store to its initial state, call hydrate with a falsy value:
+To reset the store to its initial state, call hydrate without args:
 ```javascript
 store.hydrate()
 ```

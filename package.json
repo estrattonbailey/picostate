@@ -2,7 +2,7 @@
   "name": "picostate",
   "version": "2.0.0",
   "description": "261 byte state management.",
-  "source": "index.js",
+  "source": "index.ts",
   "module": "dist/picostate.es.js",
   "main": "dist/picostate.js",
   "umd:main": "dist/picostate.umd.js",
@@ -33,7 +33,16 @@
   "homepage": "https://github.com/estrattonbailey/picostate#readme",
   "devDependencies": {
     "ava": "^2.1.0",
-    "microbundle": "^0.11.0"
+    "microbundle": "^0.11.0",
+    "ts-node": "^8.6.0"
   },
-  "dependencies": {}
+  "ava": {
+    "compileEnhancements": false,
+    "extensions": [
+      "ts"
+    ],
+    "require": [
+      "ts-node/register"
+    ]
+  }
 }
