@@ -2,45 +2,64 @@ type HydrateFunction<S> = (s: S) => Partial<S>;
 type Hydrate<S> = Partial<S> | HydrateFunction<S>;
 type ListenerFunction<S> = (s: S) => any;
 
-export default function createStore<State>(initialState: State) {
+export default function createStore<State>(initialState: Partial<State>) {
   let state = Object.assign({}, initialState);
-  let listeners = new Map();
+  let lastFiredState = Object.assign({}, initialState);
+  let listeners = {};
 
   return {
-    get state(): State {
+    get state(): Partial<State> {
       return { ...state };
     },
     hydrate(fn?: Hydrate<State>): () => void {
-      const next = fn
+      state = fn
         ? Object.assign(
             this.state,
             typeof fn === "function" ? fn(this.state) : fn
           )
         : initialState;
 
-      let changed: boolean;
-
-      for (const key of Object.keys(next)) {
-        if (next[key] !== state[key]) {
-          changed = true;
-          break;
-        }
-      }
-
-      if (changed) state = next;
-
       return () => {
-        if (!changed) return;
+        const changed = Object.keys(state).reduce((keys, key) => {
+          if (state[key] !== lastFiredState[key]) return keys.concat(key);
+          return keys;
+        }, []);
 
-        listeners.forEach(([fn, once]) => {
-          fn(this.state);
-          once && listeners.delete(fn);
-        });
+        lastFiredState = state;
+
+        if (!changed.length) return;
+
+        const fired = [];
+
+        for (const key of changed.concat("*")) {
+          for (const fn of listeners[key] || []) {
+            if (fired.indexOf(fn) > -1) continue;
+            fn({ ...state });
+            fired.push(fn);
+          }
+        }
       };
     },
-    listen(fn: ListenerFunction<State>, once?: boolean): () => void {
-      !listeners.has(fn) && listeners.set(fn, [fn, once]);
-      return () => { listeners.delete(fn) };
+    listen(
+      evs: string | string[] | ListenerFunction<State>,
+      fn?: ListenerFunction<State>
+    ): () => void {
+      if (!fn && typeof evs === "function") {
+        fn = evs;
+        evs = "*";
+      }
+
+      const keys = [].concat(evs);
+
+      for (const key of keys) {
+        listeners[key] = (listeners[key] || []).concat(fn);
+      }
+
+      return () => {
+        for (const key of keys) {
+          listeners[key].splice(listeners[key].indexOf(fn), 1);
+        }
+      };
     }
   };
 }

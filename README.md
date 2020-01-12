@@ -1,93 +1,89 @@
-# picostate
-240 byte framework agnostic immutable state manager.
+![repo-banner](https://user-images.githubusercontent.com/4732330/72222330-1e822b80-3529-11ea-8937-ddeaa5242414.png)
 
-> Why `picostate`? Valid question. There are a lot of options out there for state
-> management, and many do too much in my opinion. `picostate` aims to be the smallest
-> possible building block, upon which other libraries can be built. However,
-> it's also easy to integrate directly into most applications.
-
-### Features
-- tiny size
-- simple event based interface
-- lazy-updating
-
-```javascript
-import createStore from 'picostate'
-
-const store = createStore({ count: 0 })
-
-store.listen(state => {
-  console.log('the count is ', state.count)
-})
-
-store.hydrate({ count: 1 })
-
-const runListeners = store.hydrate(state => ({ count: state.count + 1 }))
-
-runListeners() // The count is 2
+```bash
+npm i picostate --save
 ```
 
-### Integrations
-- [@picostate/react](https://github.com/estrattonbailey/picostate-react)
+<br />
 
-# Usage
-`picostate` is dead simple. First, create a store with initial state:
-```javascript
-import createStore from 'picostate'
+Event-based immutable state management.
 
-const store = createStore({ count: 0 })
+- 400 bytes
+- familiar event based interface
+- only fires listeners for _changed values_
+- emits state updates _only when requested_
+- integrates seamlessly with [React](https://github.com/estrattonbailey/picostate-react)
+
+## Usage
+
+Create a store:
+
+```js
+import createStore from "picostate";
+
+const store = createStore({
+  a: 0,
+  b: false
+});
 ```
 
-You can access the state object directly:
-```javascript
-store.state // { count: 0 }
+Safely access state:
+
+```js
+store.state; // { a: 0, b: false }
 ```
 
-### Listeners
-To add a listener, pass a function to the `listen` method. *Listeners will only
-fire if a value on the state object changed:*
-```javascript
-store.listen(state => {
-  console.log('the count is ', state.count)
-})
+Register a listener for any state changes:
+
+```js
+store.listen(state => console.log(state));
 ```
 
-Listeners return a function that will unregister itself when called:
-```javascript
-const unregister = store.listen(state => {
-  console.log('the count is ', state.count)
-})
-unregister()
+Register a listener only for changes to an array of props, in this case `b`:
+
+```js
+store.listen(["b"], state => console.log(state.b));
 ```
 
-Listeners can also be fired once, and then automatically unregistered:
-```javascript
-store.listen(state => console.log('fires once'), true)
+Update state:
+
+```js
+const emit = store.hydrate({ a: 1 });
 ```
 
-### Updating state
-All state updates happen via the `hydrate` method.
+Fire registered listeners:
 
-To update state, but _not_ run any listeners pass an object:
-```javascript
-store.hydrate({ count: 1 })
-```
-Or a function:
-```javascript
-store.hydrate(state => ({ count: state.count + 1 }))
+```js
+emit(); // { a: 1, b: false }
 ```
 
-To fire all listeners, use the function returned from `hydrate`:
-```javascript
-const fire = store.hydrate({ count: 2 })
-fire() // => The count is 2
+Update state and fire listeners:
+
+```js
+store.hydrate({ b: true })(); // { a: 1, b: true }, true
 ```
 
-### Cleanup
-To reset the store to its initial state, call hydrate without args:
-```javascript
-store.hydrate()
+Update state using the previous state:
+
+```js
+store.hydrate(state => ({ a: state.a + 1 }))(); // { a: 2, b: true }
+```
+
+```js
+const removeListener = store.listen(state => console.log(state));
+store.hydrate({ a: 1 })(); // { a: 1, b: true }
+removeListener();
+store.hydrate({ a: 2 })(); // no listener fired
+store.state; // { a: 2, b: true }
+```
+
+Reset to initial state:
+
+```js
+store.hydrate();
+store.state; // { a: 0, b: false }
 ```
 
 ## License
+
 MIT License © [Eric Bailey](https://estrattonbailey.com)
